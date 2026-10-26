@@ -51,15 +51,25 @@ pub async fn activate_picker_overlay(
     let (cx, cy) = (cursor.x as i32, cursor.y as i32);
 
     // Hide the dashboard first so it is not part of the snapshot.
+    let mut hid_dashboard = false;
     if let Some(dashboard) = app.get_webview_window(DASHBOARD) {
-        *state.dashboard_was_visible.lock().map_err(|e| e.to_string())? =
-            dashboard.is_visible().unwrap_or(false);
-        dashboard.hide().map_err(|e| e.to_string())?;
+        let visible = dashboard.is_visible().unwrap_or(false);
+        *state.dashboard_was_visible.lock().map_err(|e| e.to_string())? = visible;
+        if visible {
+            dashboard.hide().map_err(|e| e.to_string())?;
+            hid_dashboard = true;
+        }
     }
 
-    let snapshot = tauri::async_runtime::spawn_blocking(move || picker::capture_monitor_at(cx, cy))
-        .await
-        .map_err(|e| e.to_string())??;
+    let snapshot = tauri::async_runtime::spawn_blocking(move || {
+        // The OS fades windows out; capturing immediately catches a ghost of it.
+        if hid_dashboard {
+            std::thread::sleep(std::time::Duration::from_millis(300));
+        }
+        picker::capture_monitor_at(cx, cy)
+    })
+    .await
+    .map_err(|e| e.to_string())??;
 
     if let Some(monitor) = app
         .monitor_from_point(cursor.x, cursor.y)
