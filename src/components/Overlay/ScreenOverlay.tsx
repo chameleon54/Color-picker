@@ -2,7 +2,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { emit, listen } from "@tauri-apps/api/event";
 import { invoke } from "@tauri-apps/api/core";
 import { getCurrentWindow } from "@tauri-apps/api/window";
-import { writeText } from "@tauri-apps/plugin-clipboard-manager";
 import MagnifierLoupe from "./MagnifierLoupe";
 import { pixelAt, toColorItem } from "../../lib/color";
 
@@ -82,9 +81,7 @@ export default function ScreenOverlay() {
     const c = toCursor(e);
     const rgb = image && c ? pixelAt(image, c.x, c.y) : null;
     if (!rgb) return;
-    const item = toColorItem(rgb);
-    await writeText(item.hex).catch(() => undefined);
-    await emit("color-picked", item);
+    await emit("color-picked", toColorItem(rgb));
     await close();
   };
 
