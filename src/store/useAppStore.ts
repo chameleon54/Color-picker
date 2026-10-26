@@ -11,7 +11,7 @@ export interface Settings {
 }
 
 const DEFAULT_SETTINGS: Settings = {
-  hotkey: "Alt+Shift+C",
+  hotkey: "Ctrl+Alt+X",
   autoCopy: true,
   copyFormat: "hex",
 };

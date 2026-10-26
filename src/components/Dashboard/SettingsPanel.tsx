@@ -12,7 +12,7 @@ const FORMATS: { value: CopyFormat; label: string }[] = [
   { value: "tailwind", label: "Tailwind class (blue-500)" },
 ];
 
-/** Turns a keydown into a shortcut string such as "Alt+Shift+C", or null if incomplete. */
+/** Turns a keydown into a shortcut string such as "Ctrl+Alt+X", or null if incomplete. */
 function shortcutFromEvent(e: KeyboardEvent): string | null {
   if (["Control", "Alt", "Shift", "Meta"].includes(e.key)) return null;
   const mods = [e.ctrlKey && "Ctrl", e.altKey && "Alt", e.shiftKey && "Shift", e.metaKey && "Super"].filter(Boolean);

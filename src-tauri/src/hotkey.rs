@@ -1,4 +1,4 @@
-//! Global shortcut registration (default: Alt+Shift+C).
+//! Global shortcut registration (default: Ctrl+Alt+X).
 
 use std::sync::Mutex;
 
@@ -7,7 +7,7 @@ use tauri_plugin_global_shortcut::{GlobalShortcutExt, ShortcutState};
 
 use crate::commands;
 
-pub const DEFAULT_HOTKEY: &str = "Alt+Shift+C";
+pub const DEFAULT_HOTKEY: &str = "Ctrl+Alt+X";
 
 /// The currently registered hotkey, kept so a failed rebind can be rolled back.
 pub struct HotkeyState(pub Mutex<String>);

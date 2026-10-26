@@ -2,11 +2,11 @@
 
 A lightweight, cross-platform desktop color picker built with **Tauri v2**, **Rust**, **React**, **TypeScript** and **Tailwind CSS**. Sample any color on your screen with a global hotkey, magnify pixels for precision, convert between formats, and keep a history of picked colors.
 
-> **Status:** early development. Screen sampling is implemented in the Rust backend; the overlay, loupe, dashboard, hotkey and tray are still in progress.
+> **Status:** all planned features are implemented. Testing and polishing are ongoing, and no release builds have been published yet.
 
-## Planned features
+## Features
 
-- Global hotkey (default `Alt + Shift + C`) to start picking from any app
+- Global hotkey (default `Ctrl + Alt + X`) to start picking from any app
 - 15×15 magnifier loupe with live HEX / RGB preview
 - Multi-monitor and DPI-aware sampling
 - Conversions: HEX, RGB, HSL/HSV and nearest Tailwind CSS color
@@ -18,15 +18,15 @@ A lightweight, cross-platform desktop color picker built with **Tauri v2**, **Ru
 
 - [x] Step 1 – Project scaffold (Tauri v2 + React + TypeScript + Tailwind, plugins configured)
 - [x] Step 2 – Backend pixel sampling (`picker.rs`, `get_pixel_color`, `capture_screen_region`)
-- [ ] Step 3 – Overlay window and magnifier loupe
-- [ ] Step 4 – Dashboard, history, export and settings
-- [ ] Step 5 – Event wiring, system tray, hotkey
+- [x] Step 3 – Overlay window and magnifier loupe
+- [x] Step 4 – Dashboard, history, export and settings
+- [x] Step 5 – Event wiring, system tray, hotkey, launch at startup
 
 ## Tech stack
 
 | Layer    | Tools |
 | -------- | ----- |
-| Backend  | Tauri v2, Rust, `xcap`, `image`, `tauri-plugin-global-shortcut`, `tauri-plugin-clipboard-manager`, `tauri-plugin-store` |
+| Backend  | Tauri v2, Rust, `xcap`, `image`, `tauri-plugin-global-shortcut`, `tauri-plugin-clipboard-manager`, `tauri-plugin-store`, `tauri-plugin-autostart` |
 | Frontend | React 18, Vite, TypeScript, Tailwind CSS v3, Zustand, lucide-react |
 
 ## Prerequisites
@@ -65,11 +65,14 @@ cargo test -- --ignored   # captures from the real screen
 src/                    React frontend
   components/Dashboard/   History, converter, settings
   components/Overlay/     Screen overlay and magnifier loupe
+  lib/                    Color conversion, Tailwind matching, export formats
+  store/                  Zustand store (history and settings, persisted)
 src-tauri/              Rust backend
   src/picker.rs           Screen capture and pixel sampling
-  src/hotkey.rs           Global shortcut
-  src/storage.rs          Settings and history persistence
-  src/commands.rs         IPC commands
+  src/hotkey.rs           Global shortcut registration and rebinding
+  src/tray.rs             System tray icon and menu
+  src/storage.rs          Reads the saved hotkey at startup
+  src/commands.rs         IPC commands and overlay activation
 ai-docs/                Product, requirements and architecture docs
 ```
 
