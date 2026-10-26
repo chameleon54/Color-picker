@@ -8,6 +8,7 @@ mod storage;
 
 fn main() {
     tauri::Builder::default()
+        .manage(commands::PickerState::default())
         .plugin(tauri_plugin_global_shortcut::Builder::new().build())
         .plugin(tauri_plugin_clipboard_manager::init())
         .plugin(tauri_plugin_store::Builder::new().build())
@@ -16,6 +17,9 @@ fn main() {
             commands::capture_screen_region,
             commands::save_settings,
             commands::update_hotkey_binding,
+            commands::activate_picker_overlay,
+            commands::get_overlay_snapshot,
+            commands::deactivate_picker_overlay,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

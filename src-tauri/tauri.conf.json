@@ -29,7 +29,8 @@
         "skipTaskbar": true,
         "resizable": false,
         "visible": false,
-        "fullscreen": true
+        "width": 800,
+        "height": 600
       }
     ],
     "security": { "csp": null }

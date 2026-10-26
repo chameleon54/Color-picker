@@ -21,6 +21,21 @@ impl ColorPayload {
     }
 }
 
+/// A frozen copy of one monitor, shown by the overlay and sampled client-side.
+pub struct Snapshot {
+    pub width: u32,
+    pub height: u32,
+    /// Tightly packed RGBA, row-major.
+    pub rgba: Vec<u8>,
+}
+
+/// Captures the whole monitor that contains the desktop point (`x`, `y`).
+pub fn capture_monitor_at(x: i32, y: i32) -> Result<Snapshot, String> {
+    let monitor = Monitor::from_point(x, y).map_err(|e| e.to_string())?;
+    let img = monitor.capture_image().map_err(|e| e.to_string())?;
+    Ok(Snapshot { width: img.width(), height: img.height(), rgba: img.into_raw() })
+}
+
 /// Samples the color of the single pixel at (`x`, `y`).
 pub fn sample_pixel(x: i32, y: i32) -> Result<ColorPayload, String> {
     let rgba = capture_region(x, y, 1, 1)?;
