@@ -32,6 +32,12 @@ function Dashboard() {
     void init();
   }, [init]);
 
+  // The tray menu can jump straight to a tab.
+  useEffect(() => {
+    const unlisten = listen<Tab>("navigate", (e) => setTab(e.payload));
+    return () => void unlisten.then((f) => f());
+  }, []);
+
   // The overlay announces picks; this window owns history and clipboard.
   useEffect(() => {
     if (!loaded) return;

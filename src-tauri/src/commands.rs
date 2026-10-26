@@ -5,7 +5,7 @@ use std::sync::Mutex;
 use tauri::{ipc::Response, AppHandle, Emitter, Manager, PhysicalPosition, PhysicalSize, State};
 
 use crate::picker::{self, ColorPayload, Snapshot};
-use crate::storage::SettingsPayload;
+use crate::hotkey;
 
 const OVERLAY: &str = "picker-overlay";
 const DASHBOARD: &str = "main-dashboard";
@@ -42,11 +42,18 @@ pub async fn capture_screen_region(
 /// tells the overlay to load the snapshot. The overlay shows itself once it
 /// has painted, so a stale frame is never visible.
 #[tauri::command]
-pub async fn activate_picker_overlay(
-    app: AppHandle,
-    state: State<'_, PickerState>,
-) -> Result<(), String> {
+pub async fn activate_picker_overlay(app: AppHandle) -> Result<(), String> {
+    activate_overlay(&app).await
+}
+
+/// Shared by the IPC command, the global hotkey and the tray menu.
+pub async fn activate_overlay(app: &AppHandle) -> Result<(), String> {
+    let state = app.state::<PickerState>();
     let overlay = app.get_webview_window(OVERLAY).ok_or("overlay window missing")?;
+    // A second trigger while the overlay is up would re-snapshot the overlay itself.
+    if overlay.is_visible().unwrap_or(false) {
+        return Ok(());
+    }
     let cursor = app.cursor_position().map_err(|e| e.to_string())?;
     let (cx, cy) = (cursor.x as i32, cursor.y as i32);
 
@@ -119,11 +126,6 @@ pub fn deactivate_picker_overlay(
 }
 
 #[tauri::command]
-pub async fn save_settings(_settings: SettingsPayload) -> Result<(), String> {
-    Err("not implemented".into())
-}
-
-#[tauri::command]
-pub async fn update_hotkey_binding(_hotkey: String) -> Result<(), String> {
-    Err("not implemented".into())
+pub fn update_hotkey_binding(app: AppHandle, hotkey: String) -> Result<(), String> {
+    hotkey::rebind(&app, &hotkey)
 }

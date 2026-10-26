@@ -12,6 +12,9 @@
     "global-shortcut:default",
     "clipboard-manager:allow-write-text",
     "clipboard-manager:allow-read-text",
-    "store:default"
+    "store:default",
+    "autostart:allow-enable",
+    "autostart:allow-disable",
+    "autostart:allow-is-enabled"
   ]
 }
